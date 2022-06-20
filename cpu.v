@@ -1,34 +1,37 @@
-module hall98(iclock,flag ,sw1,sw2,re,n,instr);
+module hall98(iclock,flag ,opcode , re,n,instr);
   input iclock;
-  input sw1;
-  input sw2;
+  input[31:0] opcode;
   input[31:0] re;
-  input  flag ;
+  input flag ;
   input [31:0] n;
   output instr;
   
-  reg [31:0] H=0;//1
+  reg [0:15999] stack[31:0]; //16KB stack  
+  reg [31:0] H=0;
   reg [31:0] A=0;//2
   reg [31:0] L =0;//3
   reg [31:0] N = 0;//4
   reg [16:0] P = 0; 
-  reg[2:0] mov = 2'b10;
-  reg [2:0]add = 2'b01;
-  reg [2:0]sub = 2'b11;
-  reg [2:0]mul = 2'b00;
+  reg [31:0] mov = 32'b00000000000000000000000001000101;
+  reg [31:0] add = 32'b00000000000000000000000001000110;
+  reg [31:0] sub = 32'b00000000000000000000000001000111;
+  reg [31:0] mul = 32'b00000000000000000000000001001000;
+  reg [31:0] ldr = 32'b00000000000000000000000001001001;
+  reg [31:0] str = 32'b00000000000000000000000001001010;
+
   parameter herz =25000/100*1;
   reg [7:0] currinst=0;
   integer curreg = 0;
   integer val= 0;
   integer res=0;
    //flag is 0? we are moving numbers, flag is 1? we are moving regs!
-  
+  //LDR -> load stuff from register into number of memory on stack;
+
   always @ (posedge iclock)
   begin
     if(flag != 3'b1)
     begin 
-       
-    if({sw1,sw2} == sub)
+   if(opcode  == sub)
       begin
       case(n)
               1:
@@ -47,6 +50,7 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
                begin
                   curreg=N;
                end
+      
       endcase
       case(re)
               1:
@@ -65,6 +69,7 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
                begin
                   val=N;
                end
+      
       endcase
 
       res = val-curreg;
@@ -90,8 +95,61 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
 
      
       end
+    if(opcode == str)
+    begin
+        // LDR SYNTAX : LDR R0,ADDR 
+            //re -> register value 
+      // n->  address on the stack
+       case(re)
+              1:
+               begin
+                  curreg=H;
+               end
+               2:
+               begin
+                  curreg=A;
+               end
+               3:
+               begin
+                  curreg=L;
+               end
+               4:
+               begin
+                  curreg=N;
+               end
+      endcase
+      
+      stack[n] = curreg; 
+ 
+    end
+    if(opcode == ldr)
+      begin
+        // STR SYNTAX : LDR R0,ADDR 
+            //re -> register value 
+      // n->  address on the stack
 
-    if({sw1,sw2} == mul)
+      //load value from stackaddr and put into re
+       curreg = stack[n];
+       case(re)
+              1:
+               begin
+                  H=curreg;
+               end
+               2:
+               begin
+                  A=curreg;
+               end
+               3:
+               begin
+                  L=curreg;
+               end
+               4:
+               begin
+                  N=curreg;
+               end
+      endcase
+   end
+    if(opcode  == mul)
       begin
       case(n)
               1:
@@ -153,10 +211,10 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
      
       end
       
-    if({sw1,sw2} == add)
+    if(opcode == add)
       begin
       case(n)
-              1:
+               1:
                begin
                   curreg=H;
                end
@@ -211,13 +269,11 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
                   N=res;
                end
       endcase
-
-     
       end
       
-    if({sw1,sw2} == mov)
+    if(opcode == mov)
     begin
-       
+         
         if(flag == 0)
         begin
             case(re) 
@@ -299,9 +355,9 @@ module hall98(iclock,flag ,sw1,sw2,re,n,instr);
   end 
   always @ (*)
   begin
-
-      $display("REGS: H:%b  A:%b L:%b N:%b IP:%b  INPUT:  %b %b %b",H,A,L,N,P,re,n,flag);
      
+      $display("H:%b  A:%b L:%b N:%b IP:%d  INPUT:  RE:%d N:%d FLAG:%d OPCODE: %d",H,A,L,N,P,re,n,flag,opcode);
+      //$display("OCPODE :%b",opcode); 
   end
 
 endmodule
