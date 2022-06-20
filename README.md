@@ -41,3 +41,6 @@ STR: 0x49
 <br>
 LDR: 0x4a
 <br>
+<h1>Example: Result of memtest.v </h1>
+<img width="1293" alt="image" src="https://user-images.githubusercontent.com/59802817/174687095-c39d0236-cee4-4e6e-8292-72bc277e5a4e.png">
+
