@@ -22,5 +22,5 @@ I'm currently doing geohot's course ,so I somehow need to learn this stuff.
 And today I think I finally connected the dots on how CPU emulators work in Verilog.
 <br>
 Basically everything is the same as let's say, building emulators in C++ , just harder and more hardware specific.
-
+<h1> LUT Table (represented in bits)</h1>
 <img width="627" alt="image" src="https://user-images.githubusercontent.com/59802817/174658376-8cce2512-988e-4633-b895-e1ee427b1068.png">
