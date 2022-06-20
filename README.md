@@ -15,6 +15,12 @@ ADD (works only with registers (to lazy to add more) )
 SUB (works only with registers (to lazy to add more) )
 <br>
 MUL (works only with registers (to lazy to add more) )
+<br>
+LDR (loads instruction from stack address to register)
+<br>
+STR (stores register value to stack address)
+
+<br>
 
 <h1>Why? </h1>
 I'm currently doing geohot's course ,so I somehow need to learn this stuff.
@@ -22,5 +28,16 @@ I'm currently doing geohot's course ,so I somehow need to learn this stuff.
 And today I think I finally connected the dots on how CPU emulators work in Verilog.
 <br>
 Basically everything is the same as let's say, building emulators in C++ , just harder and more hardware specific.
-<h1> LUT Table (represented in bits)</h1>
-<img width="627" alt="image" src="https://user-images.githubusercontent.com/59802817/174658376-8cce2512-988e-4633-b895-e1ee427b1068.png">
+<h1> Opcodes: </h1>
+MOV: 0x45
+<br>
+ADD: 0x46
+<br>
+SUB: 0x47
+<br>
+MUL: 0x48
+<br>
+STR: 0x49
+<br>
+LDR: 0x4a
+<br>
